@@ -42,9 +42,9 @@ if ($command -eq "install") {
 } elseif ($command -eq "lint") {
     python -m poetry run pflake8
 } elseif ($command -eq "build") {
-    pyinstaller ./quiz_practice/app/test.py --onefile --noconsole --clean
+    pyinstaller ./quiz_practice/app/main.py --onefile --clean --noconsole
  }elseif ($command -eq "clean") {
-    Remove-Item -Recurse ./build/ -ea SilentlyContinue
+    Remove-Item -Recurse ./.venv/ -ea SilentlyContinue
     Remove-Item -Recurse ./dist/ -ea SilentlyContinue
     Remove-Item -Recurse ./build/ -ea SilentlyContinue
     Remove-Item ./*.spec -ea SilentlyContinue

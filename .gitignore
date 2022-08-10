@@ -133,3 +133,6 @@ poetry.toml
 
 # VS Code
 .vscode
+
+# workspace
+data

@@ -1,0 +1,1 @@
+python ./quiz_practice/app/main.py

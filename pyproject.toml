@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "quiz_practice"
-version = "0.1.0"
+version = "0.7.5"
 description = ""
 authors = ["Your Name <you@example.com>"]
 license = "MIT"
@@ -8,6 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
 pyinstaller = "^5.3"
+openpyxl = "^3.0.10"
 
 [tool.poetry.dev-dependencies]
 pyproject-flake8 = "^0.0.1-alpha.4"
