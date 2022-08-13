@@ -71,7 +71,7 @@ class App(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         # set root window
-        self.title("クイズオンエア練習")
+        self.title("もちうさドリル for Windows")
         set_window_center(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT)
 
         # set style
@@ -252,7 +252,7 @@ class App(tk.Tk):
     def render_quiz(self) -> None:
         """Render quiz window."""
         self.quiz_window = tk.Toplevel()
-        self.quiz_window.title("クイズオンエア練習")
+        self.quiz_window.title("もちうさドリル for Windows")
         set_window_center(self.quiz_window, width=QUIZ_WINDOW_WIDTH, height=QUIZ_WINDOW_HEIGHT)
 
         self.quiz_window.grab_set()
@@ -377,11 +377,11 @@ class App(tk.Tk):
         self.n_quizzes = len(self.quizzes)
         if self.n_quizzes == 0:
             if self.mode_var.get() == Mode.WRONG.value:
-                messagebox.showinfo("クイズオンエア練習", "間違えた問題がないよ！")
+                messagebox.showinfo("もちうさドリル for Windows", "間違えた問題がないよ！")
             elif self.mode_var.get() == Mode.REVIEW.value:
-                messagebox.showinfo("クイズオンエア練習", "復習リストに問題がないよ！")
+                messagebox.showinfo("もちうさドリル for Windows", "復習リストに問題がないよ！")
             elif self.mode_var.get() == Mode.RESTART.value:
-                messagebox.showinfo("クイズオンエア練習", "全て解き終わってるよ！")
+                messagebox.showinfo("もちうさドリル for Windows", "全て解き終わってるよ！")
             self.quiz_window.destroy()
         else:
             self.quiz_idx = 0
@@ -394,6 +394,7 @@ class App(tk.Tk):
     def display_quiz(self) -> None:
         """Display quiz."""
         # check finish
+        self.is_answered = False
         if self.quiz_idx + 1 >= self.n_quizzes:
             self.next_button["text"] = "終了！"
             self.next_button["command"] = lambda: self.pre_quiz_window_close(is_finish=True)
@@ -437,17 +438,20 @@ class App(tk.Tk):
                 genre = self.current_quiz["genre"]
                 self.wrong_quizzes[G2S[genre]]["quiz_list"].append(self.current_quiz)
                 print("wrong quiz added.")
+            self.is_answered = True
+            self.quiz_idx += 1
 
         return display_answer
 
     def display_next(self) -> None:
         """Display next quiz."""
+        if not self.is_answered:
+            self.quiz_idx += 1
         if self.review_check_var.get():
             self.add_review()
         else:
             self.remove_review()
         self.review_check_var.set(self.default_review_ckb_var.get())
-        self.quiz_idx += 1
         self.display_quiz()
 
     def add_review(self) -> None:
@@ -478,15 +482,16 @@ class App(tk.Tk):
     def pre_quiz_window_close(self, is_finish: bool = False) -> None:
         """Pre-process before closing quiz window."""
         # save quizzes
-        if not is_finish:
+        if not is_finish or not self.is_answered:
             for restart_quiz in self.quizzes[self.quiz_idx:]:
                 genre = restart_quiz["genre"]
                 self.restart_quizzes[G2S[genre]]["quiz_list"].append(restart_quiz)
+                if self.mode_var.get() == Mode.WRONG.value:
+                    self.wrong_quizzes[G2S[genre]]["quiz_list"].append(restart_quiz)
+        if self.review_check_var.get():
+            self.add_review()
         else:
-            if self.review_check_var.get():
-                self.add_review()
-            else:
-                self.remove_review()
+            self.remove_review()
 
         save_data_filename = f"save_data_{self.save_data_count+1:03d}_{self.mode_var.get()}.quiz"
         match self.mode_var.get():
